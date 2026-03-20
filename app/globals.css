@@ -1,26 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap");
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.title {
+  font-family: "Pixelify Sans", sans-serif;
+  font-optical-sizing: auto;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes slot-reel {
+  from {
+    transform: perspective(900px) rotateX(0deg);
+    filter: blur(0);
+  }
+  to {
+    transform: perspective(900px) rotateX(360deg);
+    filter: blur(0.8px);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.slot-reel {
+  display: inline-block;
+  transform-origin: 50% 50%;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  animation: slot-reel 1s steps(24, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slot-reel {
+    animation: none;
+    filter: none;
+  }
 }
