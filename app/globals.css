@@ -1,33 +1,62 @@
-@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap");
 @import "tailwindcss";
 
-.title {
-  font-family: "Pixelify Sans", sans-serif;
-  font-optical-sizing: auto;
+:root {
+  --heading-color: #111;
+  --subtitle-color: rgba(0, 0, 0, 0.4);
+  --selection-color: #ededed;
+  --underline-hover: #ccc;
+
+  --underline-thickness: 1px;
 }
 
-@keyframes slot-reel {
-  from {
-    transform: perspective(900px) rotateX(0deg);
-    filter: blur(0);
-  }
-  to {
-    transform: perspective(900px) rotateX(360deg);
-    filter: blur(0.8px);
-  }
+* {
+  color: var(--heading-color);
+  scrollbar-width: thin;
+  scrollbar-color: var(--selection-color) transparent;
 }
 
-.slot-reel {
+a:not(.post) {
+  position: relative;
   display: inline-block;
-  transform-origin: 50% 50%;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  animation: slot-reel 1s steps(24, end) infinite;
+  text-decoration: none;
+  border-bottom: var(--underline-thickness) solid var(--selection-color);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .slot-reel {
-    animation: none;
-    filter: none;
-  }
+a:not(.post)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: calc(-1 * var(--underline-thickness));
+  width: 100%;
+  height: var(--underline-thickness);
+  background-color: var(--underline-hover);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s ease;
+}
+
+a:not(.post):hover::after,
+a:not(.post):focus-visible::after {
+  transform: scaleX(1);
+}
+
+a.post {
+  text-decoration: none;
+}
+
+h3 {
+  color: var(--subtitle-color);
+}
+
+/* Fade non-hovered post rows when hovering the list */
+.posts-list > li {
+  transition: opacity 0.2s ease;
+}
+
+.posts-list:hover > li {
+  opacity: 0.5;
+}
+
+.posts-list:hover > li:hover {
+  opacity: 1;
 }

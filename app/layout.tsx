@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
-import { Google_Sans_Flex } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const googleSansFlex = Google_Sans_Flex({
-  variable: "--font-google-sans-flex",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Devin Vasavong",
@@ -38,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${googleSansFlex.className} h-full antialiased`}
+      className={`${inter.className} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
