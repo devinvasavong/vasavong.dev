@@ -37,7 +37,12 @@ export default function RootLayout({
       lang="en"
       className={`${inter.className} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {/* gradient to make it look seamless */}
+        <div className="w-full bg-linear-to-b from-white to-white/0 h-5 sticky top-0 z-50"></div>
+        {children}
+        <div className="w-full bg-linear-to-t from-white to-white/0 h-5 sticky bottom-0 z-50"></div>
+      </body>
     </html>
   );
 }
