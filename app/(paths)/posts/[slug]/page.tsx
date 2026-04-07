@@ -72,7 +72,7 @@ function stripMarkdown(markdown: string): string {
         .map((line) =>
             line
                 // Remove blockquote markers
-                .replace(/^>\s*/g, "")
+                .replace(/^>\s*/, "")
                 // Remove heading markers
                 .replace(/^#{1,6}\s+/, "")
                 // Remove horizontal rules
@@ -82,9 +82,14 @@ function stripMarkdown(markdown: string): string {
         )
         .join(" ")
         // Remove inline code, keeping the inner text
-        .replace(/`([^`]+)`/g, "$1")
-        // Remove bold/italic markers
-        .replace(/(\*{1,3}|_{1,3})(.*?)\1/g, "$2")
+        .replace(/`([^`]*?)`/g, "$1")
+        // Remove bold/italic markers (longest to shortest to avoid partial matches)
+        .replace(/\*{3}(.+?)\*{3}/g, "$1")
+        .replace(/_{3}(.+?)_{3}/g, "$1")
+        .replace(/\*{2}(.+?)\*{2}/g, "$1")
+        .replace(/_{2}(.+?)_{2}/g, "$1")
+        .replace(/\*(.+?)\*/g, "$1")
+        .replace(/_(.+?)_/g, "$1")
         // Remove images
         .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
         // Remove links, keeping display text
