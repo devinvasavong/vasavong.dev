@@ -15,14 +15,14 @@
   scrollbar-color: var(--selection-color) transparent;
 }
 
-a:not(.post) {
+a:not(.post):not(.toc-link) {
   position: relative;
   display: inline-block;
   text-decoration: none;
   border-bottom: var(--underline-thickness) solid var(--selection-color);
 }
 
-a:not(.post)::after {
+a:not(.post):not(.toc-link)::after {
   content: "";
   position: absolute;
   left: 0;
@@ -35,8 +35,8 @@ a:not(.post)::after {
   transition: transform 0.3s ease;
 }
 
-a:not(.post):hover::after,
-a:not(.post):focus-visible::after {
+a:not(.post):not(.toc-link):hover::after,
+a:not(.post):not(.toc-link):focus-visible::after {
   transform: scaleX(1);
 }
 
@@ -46,6 +46,120 @@ a.post {
 
 h3 {
   color: var(--subtitle-color);
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.post-content p,
+.post-content ul,
+.post-content ol,
+.post-content blockquote,
+.post-content pre {
+  margin: 0.75rem 0;
+}
+
+.post-content ul,
+.post-content ol {
+  padding-left: 1.25rem;
+}
+
+.post-content ul {
+  list-style: disc;
+}
+
+.post-content ol {
+  list-style: decimal;
+}
+
+.post-content code {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+}
+
+.post-content :not(pre) > code {
+  background: #f5f5f5;
+  border-radius: 0.35rem;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.92em;
+}
+
+.md-code-block {
+  border: 1px solid #e7e7e7;
+  border-radius: 0.55rem;
+  overflow: hidden;
+  background: #fafafa;
+}
+
+.md-code-header {
+  border-bottom: 1px solid #ececec;
+  padding: 0.45rem 0.7rem;
+  background: #f2f2f2;
+}
+
+.md-code-lang {
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #666;
+  font-weight: 600;
+}
+
+.md-code-pre {
+  margin: 0;
+  padding: 0.8rem 1rem;
+  overflow-x: auto;
+}
+
+.md-code-pre code {
+  display: block;
+  white-space: pre;
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc-link {
+  display: block;
+  border-bottom: 0;
+  color: var(--subtitle-color);
+  padding: 0.16rem 0;
+  transition: color 0.2s ease;
+}
+
+.toc-link:hover,
+.toc-link:focus-visible {
+  color: var(--heading-color);
+}
+
+.toc-level-2 {
+  padding-left: 0.5rem;
+}
+.toc-level-3 {
+  padding-left: 1rem;
+}
+.toc-level-4 {
+  padding-left: 1.5rem;
+}
+.toc-level-5 {
+  padding-left: 2rem;
+}
+.toc-level-6 {
+  padding-left: 2.5rem;
 }
 
 /* Fade non-hovered post rows when hovering the list */
@@ -59,4 +173,25 @@ h3 {
 
 .posts-list:hover > li:hover {
   opacity: 1;
+}
+
+.md-blockquote {
+  margin: 1rem 0;
+  padding: 0.7rem 0.9rem;
+  border-radius: 0.55rem;
+  border-left: 3px solid #d9d9d9;
+  background: #f7f7f7;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.md-blockquote strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--subtitle-color);
+  font-weight: 600;
+}
+
+.md-blockquote p {
+  margin: 0;
 }
