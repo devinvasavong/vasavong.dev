@@ -173,7 +173,7 @@ export default async function Page({ params }: PostPageProps) {
     }
 
     return (
-        <div className="w-screen min-h-screen">
+        <div className="w-screen min-h-screen text-sm">
             <div className="max-w-6xl mx-auto p-6 lg:grid lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-12">
                 <aside className="md:mt-12 hidden lg:block lg:sticky lg:top-10 self-start">
                     {headings.length > 0 && (
