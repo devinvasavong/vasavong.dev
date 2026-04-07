@@ -1,0 +1,45 @@
+---
+title: LyricLens
+date: 2026-04-05
+publish: true
+---
+
+> Note: This project is open source and the code can be found on [GitHub](https://github.com/lyricslens/lyriclens).
+
+# Overview
+
+LyricLens is a semester project created by 5 students at Rochester Institute of Technology for the class SWEN-514: Engineering Cloud Software Systems. Throughout the semester, we designed a full-stack application using Infrastructure as Code (IaC) principles, leveraging AWS services, and implemented it using Terraform.
+
+Our team has learned a lot of valuable skills in cloud computing, software engineering, and project management through this project. The application allows users to input a Spotify playlist and generates an image for the playlist based on the lyrics of the songs in the playlist.
+
+In our course, teams could either choose to build a project based off a given template or create their own project from scratch and get approval from the Teaching Assistants (TAs) and the Professor. Our team decided to create our own project from scratch. We brainstormed various ideas and eventually settled on the concept of LyricLens.
+
+# Architecture
+
+```python
+Front End (Next.js)
++ TypeScript
+
+Back End
++ Lambda Function (Python)
++ API Gateway
++ S3 (for storing generated images and building the front end)
++ DynamoDB (for storing generated IDs and their corresponding image URLs)
++ Bedrock (for generating images based on lyrics)
++ Comprehend (for analyzing lyrics and extracting themes and sentiments)
++ Terraform (for infrastructure as code)
+```
+
+# Learning Process
+
+This class was a great learning experience for myself and our team. We were able to learn a lot about AWS and how it is used in real-world applications.
+
+I also learned that I really enjoy working with AWS and cloud computing in general. I look for ways to apply my knowledge of AWS and Terraform in my personal projects and I am excited to continue learning more about these technologies in the future.
+
+Our team created tickets for each feature that we wanted to implement. We were tasked to utilize **six** AWS services in our project.
+
+# What I Did
+
+I worked on the front end of the application, which was built using Next.js and TypeScript. I also worked on the back end, which was built using AWS Lambda functions written in Python. I was responsible for integrating the front end with the back end and ensuring that the application was functioning properly. At some point, I had to work on dealing with CORS issues when making API calls from the front end to the back end, which was a great learning experience for me.
+
+It really wasn't the typical Next.js CORS issue where you add an authorized domain in config; this was dealing with API Gateway through Terraform.
