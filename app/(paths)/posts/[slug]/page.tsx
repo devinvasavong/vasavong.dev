@@ -66,6 +66,36 @@ function textFromReactNode(node: ReactNode): string {
     return "";
 }
 
+function stripMarkdown(markdown: string): string {
+    return markdown
+        .split("\n")
+        .map((line) =>
+            line
+                // Remove blockquote markers
+                .replace(/^>\s*/g, "")
+                // Remove heading markers
+                .replace(/^#{1,6}\s+/, "")
+                // Remove horizontal rules
+                .replace(/^[-*_]{3,}\s*$/, "")
+                // Remove fenced code blocks
+                .replace(/^```[^\n]*$/, "")
+        )
+        .join(" ")
+        // Remove inline code, keeping the inner text
+        .replace(/`([^`]+)`/g, "$1")
+        // Remove bold/italic markers
+        .replace(/(\*{1,3}|_{1,3})(.*?)\1/g, "$2")
+        // Remove images
+        .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+        // Remove links, keeping display text
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+        // Remove HTML tags
+        .replace(/<[^>]+>/g, "")
+        // Collapse whitespace
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
 export async function generateStaticParams() {
     return getPostBySlugs().map((slug) => ({ slug }))
 }
@@ -81,7 +111,8 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
         }
     }
 
-    const description = post.subtitle ? post.subtitle : post.content.slice(0, 160).replace(/\n/g, " ") + "...";
+    const cleaned = stripMarkdown(post.content);
+    const description = post.subtitle ? post.subtitle : cleaned.slice(0, 160).trimEnd() + (cleaned.length > 160 ? "..." : "");
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://vasavong.dev";
     const postUrl = `${siteUrl}/posts/${post.slug}`;
 
