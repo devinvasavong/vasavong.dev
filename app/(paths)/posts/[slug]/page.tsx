@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ReactNode } from "react";
+import { headers } from "next/headers";
 
 type Params = { slug: string };
 type PostPageProps = { params: Promise<Params> };
@@ -132,7 +133,10 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 
     const cleaned = stripMarkdown(post.content);
     const description = post.subtitle ? post.subtitle : cleaned.slice(0, 160).trimEnd() + (cleaned.length > 160 ? "..." : "");
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://vasavong.dev";
+    const requestHeaders = await headers();
+    const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host");
+    const proto = requestHeaders.get("x-forwarded-proto") ?? "https";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (host ? `${proto}://${host}` : "https://vasavong.dev");
     const postUrl = `${siteUrl}/posts/${post.slug}`;
     const firstImage = getFirstMarkdownImageSrc(post.content);
     const openGraphImage = firstImage ? toAbsoluteUrl(siteUrl, firstImage) : undefined;
