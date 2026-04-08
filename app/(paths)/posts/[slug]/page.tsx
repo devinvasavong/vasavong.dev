@@ -66,6 +66,20 @@ function textFromReactNode(node: ReactNode): string {
     return "";
 }
 
+function getFirstMarkdownImageSrc(markdown: string): string | null {
+    const match = markdown.match(/!\[[^\]]*\]\(([^)\s]+)(?:\s+["'][^"']*["'])?\)/);
+    return match?.[1] ?? null;
+}
+
+function toAbsoluteUrl(siteUrl: string, maybePath: string): string {
+    if (/^https?:\/\//i.test(maybePath)) {
+        return maybePath;
+    }
+
+    const normalizedPath = maybePath.startsWith("/") ? maybePath : `/${maybePath}`;
+    return `${siteUrl.replace(/\/$/, "")}${normalizedPath}`;
+}
+
 export async function generateStaticParams() {
     return getPostBySlugs().map((slug) => ({ slug }))
 }
@@ -84,6 +98,8 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     const description = post.subtitle ? post.subtitle : post.content.slice(0, 160).replace(/\n/g, " ") + "...";
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://vasavong.dev";
     const postUrl = `${siteUrl}/posts/${post.slug}`;
+    const firstImage = getFirstMarkdownImageSrc(post.content);
+    const openGraphImage = firstImage ? toAbsoluteUrl(siteUrl, firstImage) : undefined;
 
     const metadata: Metadata = {
         title: post.title,
@@ -95,6 +111,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
             url: postUrl,
             type: "article",
             publishedTime: post.date ? new Date(post.date).toISOString() : undefined,
+            images: openGraphImage ? [openGraphImage] : undefined,
         },
 
         twitter: {
@@ -102,6 +119,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
             title: post.title,
             description: description,
             creator: "@devinvasavong",
+            images: openGraphImage ? [openGraphImage] : undefined,
         },
 
         alternates: {
@@ -161,16 +179,9 @@ export default async function Page({ params }: PostPageProps) {
         );
     };
 
-    const renderBlockquote = ({ children }: { children?: ReactNode }) => {
-        const type = textFromReactNode(children).trim().split(": ")[0];
-        const text = textFromReactNode(children).trim().split(": ").slice(1).join(": ").trim();
-        return (
-            <div className="md-blockquote">
-                <strong style={{ color: "var(--subtitle-color)", fontWeight: "500" }}>{type}</strong>
-                <p >{text}</p>
-            </div>
-        )
-    }
+    const renderBlockquote = ({ children }: { children?: ReactNode }) => (
+        <blockquote className="md-blockquote">{children}</blockquote>
+    );
 
     return (
         <div className="w-screen min-h-screen">
