@@ -78,6 +78,8 @@ function toAbsoluteUrl(siteUrl: string, maybePath: string): string {
 
     const normalizedPath = maybePath.startsWith("/") ? maybePath : `/${maybePath}`;
     return `${siteUrl.replace(/\/$/, "")}${normalizedPath}`;
+}
+
 function stripMarkdown(markdown: string): string {
     return markdown
         .split("\n")
