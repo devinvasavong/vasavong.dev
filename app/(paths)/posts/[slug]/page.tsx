@@ -78,6 +78,39 @@ function toAbsoluteUrl(siteUrl: string, maybePath: string): string {
 
     const normalizedPath = maybePath.startsWith("/") ? maybePath : `/${maybePath}`;
     return `${siteUrl.replace(/\/$/, "")}${normalizedPath}`;
+function stripMarkdown(markdown: string): string {
+    return markdown
+        .split("\n")
+        .map((line) =>
+            line
+                // Remove blockquote markers
+                .replace(/^>\s*/, "")
+                // Remove heading markers
+                .replace(/^#{1,6}\s+/, "")
+                // Remove horizontal rules
+                .replace(/^[-*_]{3,}\s*$/, "")
+                // Remove fenced code blocks
+                .replace(/^```[^\n]*$/, "")
+        )
+        .join(" ")
+        // Remove inline code, keeping the inner text
+        .replace(/`([^`]*?)`/g, "$1")
+        // Remove bold/italic markers (longest to shortest to avoid partial matches)
+        .replace(/\*{3}(.+?)\*{3}/g, "$1")
+        .replace(/_{3}(.+?)_{3}/g, "$1")
+        .replace(/\*{2}(.+?)\*{2}/g, "$1")
+        .replace(/_{2}(.+?)_{2}/g, "$1")
+        .replace(/\*(.+?)\*/g, "$1")
+        .replace(/_(.+?)_/g, "$1")
+        // Remove images
+        .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+        // Remove links, keeping display text
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+        // Remove HTML tags
+        .replace(/<[^>]+>/g, "")
+        // Collapse whitespace
+        .replace(/\s+/g, " ")
+        .trim();
 }
 
 export async function generateStaticParams() {
@@ -95,7 +128,8 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
         }
     }
 
-    const description = post.subtitle ? post.subtitle : post.content.slice(0, 160).replace(/\n/g, " ") + "...";
+    const cleaned = stripMarkdown(post.content);
+    const description = post.subtitle ? post.subtitle : cleaned.slice(0, 160).trimEnd() + (cleaned.length > 160 ? "..." : "");
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://vasavong.dev";
     const postUrl = `${siteUrl}/posts/${post.slug}`;
     const firstImage = getFirstMarkdownImageSrc(post.content);
@@ -184,7 +218,7 @@ export default async function Page({ params }: PostPageProps) {
     );
 
     return (
-        <div className="w-screen min-h-screen">
+        <div className="w-screen min-h-screen text-sm">
             <div className="max-w-6xl mx-auto p-6 lg:grid lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-12">
                 <aside className="md:mt-12 hidden lg:block lg:sticky lg:top-10 self-start">
                     {headings.length > 0 && (
