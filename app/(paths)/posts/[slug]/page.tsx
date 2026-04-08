@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ReactNode } from "react";
+import { headers } from "next/headers";
 
 type Params = { slug: string };
 type PostPageProps = { params: Promise<Params> };
@@ -66,6 +67,20 @@ function textFromReactNode(node: ReactNode): string {
     return "";
 }
 
+function getFirstMarkdownImageSrc(markdown: string): string | null {
+    const match = markdown.match(/!\[[^\]]*\]\(([^)\s]+)(?:\s+["'][^"']*["'])?\)/);
+    return match?.[1] ?? null;
+}
+
+function toAbsoluteUrl(siteUrl: string, maybePath: string): string {
+    if (/^https?:\/\//i.test(maybePath)) {
+        return maybePath;
+    }
+
+    const normalizedPath = maybePath.startsWith("/") ? maybePath : `/${maybePath}`;
+    return `${siteUrl.replace(/\/$/, "")}${normalizedPath}`;
+}
+
 function stripMarkdown(markdown: string): string {
     return markdown
         .split("\n")
@@ -118,8 +133,13 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 
     const cleaned = stripMarkdown(post.content);
     const description = post.subtitle ? post.subtitle : cleaned.slice(0, 160).trimEnd() + (cleaned.length > 160 ? "..." : "");
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://vasavong.dev";
+    const requestHeaders = await headers();
+    const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host");
+    const proto = requestHeaders.get("x-forwarded-proto") ?? "https";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (host ? `${proto}://${host}` : "https://vasavong.dev");
     const postUrl = `${siteUrl}/posts/${post.slug}`;
+    const firstImage = getFirstMarkdownImageSrc(post.content);
+    const openGraphImage = firstImage ? toAbsoluteUrl(siteUrl, firstImage) : undefined;
 
     const metadata: Metadata = {
         title: post.title,
@@ -131,6 +151,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
             url: postUrl,
             type: "article",
             publishedTime: post.date ? new Date(post.date).toISOString() : undefined,
+            images: openGraphImage ? [openGraphImage] : undefined,
         },
 
         twitter: {
@@ -138,6 +159,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
             title: post.title,
             description: description,
             creator: "@devinvasavong",
+            images: openGraphImage ? [openGraphImage] : undefined,
         },
 
         alternates: {
@@ -197,16 +219,9 @@ export default async function Page({ params }: PostPageProps) {
         );
     };
 
-    const renderBlockquote = ({ children }: { children?: ReactNode }) => {
-        const type = textFromReactNode(children).trim().split(": ")[0];
-        const text = textFromReactNode(children).trim().split(": ").slice(1).join(": ").trim();
-        return (
-            <div className="md-blockquote">
-                <strong style={{ color: "var(--subtitle-color)", fontWeight: "500" }}>{type}</strong>
-                <p >{text}</p>
-            </div>
-        )
-    }
+    const renderBlockquote = ({ children }: { children?: ReactNode }) => (
+        <blockquote className="md-blockquote">{children}</blockquote>
+    );
 
     return (
         <div className="w-screen min-h-screen text-sm">
