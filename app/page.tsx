@@ -11,7 +11,8 @@ export default function Page() {
 				<article>
 					<p className="mt-4 font-[400]">
 						Senior college student at <LinkText text="Rochester Institute of Technology" href="https://www.rit.edu" />
-						{' '} on co-op at <LinkText text="DEKA Research & Development" href="https://www.dekaresearch.com" />
+						{' '}and Software Engineering Intern at <LinkText text="Excellus BlueCross BlueShield" href="https://www.excellusbcbs.com" />
+						. Previously on co-op at <LinkText text="DEKA Research & Development" href="https://www.dekaresearch.com" />
 						.
 					</p>
 					<p className="mt-4 font-[400]">
